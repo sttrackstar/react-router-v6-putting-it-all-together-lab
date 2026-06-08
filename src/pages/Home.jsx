@@ -12,8 +12,8 @@ function Home() {
         </p>
         <nav>
           {/* add links for directors page and about page */}
-          <a>View Directors</a> |{" "}
-          <a>Learn More About This App</a>
+          <Link to="/directors">View Directors</Link> {' | '}
+          <Link to="/about">Learn More About This App</Link>
         </nav>
       </main>
     </>
