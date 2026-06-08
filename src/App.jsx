@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Home from "./pages/Home";
 import About from "./pages/About";
 import DirectorContainer from "./pages/DirectorContainer";
@@ -11,6 +10,7 @@ import MovieCard from "./pages/MovieCard";
 
 function App() {
   return (
+    <>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,6 +27,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 

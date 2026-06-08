@@ -1,22 +1,43 @@
-import { useParams, Outlet, useOutletContext } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import NavBar from '../components/NavBar';
+import { Link, Outlet } from "react-router-dom"
 
-function DirectorCard() {
-  const { id } = useParams();
-  const { directors } = useOutletContext();
+const DirectorContainer = () => {
+    const [directors, setDirectors] = useState([])
 
-  const director = directors.find(d => d.id === Number(id));
+    useEffect(() => {
+        fetch("http://localhost:4000/directors")
+        .then(r => {
+            if (!r.ok) { throw new Error("failed to fetch directors") }
+            return r.json()
+        })
+        .then(setDirectors)
+        .catch(console.log)
+    }, [])
 
-  if (!director) {
-    return <h2>Director not found</h2>;
-  }
+    const addDirector = (newDirector) => {
+        setDirectors(previousDirectors => [...previousDirectors, newDirector])
+    }
 
-  return (
-    <div>
-      <h2>{director.name}</h2>
-      <p>{director.bio}</p>
-      <Outlet context={{ director }} />
-    </div>
-  );
+    const updateDirector = (updatedDirector) => {
+        setDirectors(previousDirectors => previousDirectors.map(director => {
+            if(director.id === updatedDirector.id) {
+                return updatedDirector
+            }
+            return director
+        }))
+    }
+
+    return (
+        <>
+            <NavBar />
+            <main>
+                <h1>Welcome to the Director's Directory!</h1>
+                <Link to="new">Add a new Director</Link>
+                <Outlet context={{directors, addDirector, updateDirector}}/>
+            </main>
+        </>
+    );
 }
 
-export default DirectorCard;
+export default DirectorContainer;
