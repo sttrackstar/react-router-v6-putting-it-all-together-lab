@@ -10,7 +10,6 @@ import MovieCard from "./pages/MovieCard";
 
 function App() {
   return (
-    <>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,7 +26,6 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-    </>
   );
 }
 

@@ -1,43 +1,42 @@
 import { useState } from "react"
-import { v4 as uuidv4 } from 'uuid'
-import { useNavigate, useOutletContext, useParams } from "react-router-dom"
+import { useParams, useOutletContext, useNavigate } from "react-router-dom"
+import { v4 as uuidv4 } from "uuid"
 
 function MovieForm() {
+  const { id } = useParams()
+  const [director] = useOutletContext()
+  const navigate = useNavigate()
+
   const [title, setTitle] = useState("")
   const [time, setTime] = useState("")
   const [genres, setGenres] = useState("")
-  const navigate = useNavigate()
 
-  const { directors, updateDirector } = useOutletContext()
-  const { id } = useParams()
-  const director = directors.find(d => d.id === id)
-
-  if (!director) { return <h2>Director not found.</h2>}
+  if (!director) return <h2>Director not found</h2>
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
     const newMovie = {
       id: uuidv4(),
       title,
       time: parseInt(time),
-      genres: genres.split(",").map((genre) => genre.trim()),
+      genres: genres.split(",").map((g) => g.trim()),
     }
+
+    const updatedDirector = {
+      ...director,
+      movies: [...director.movies, newMovie],
+    }
+
     fetch(`http://localhost:4000/directors/${id}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({movies: [...director.movies, newMovie]})
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedDirector),
     })
-    .then(r => {
-      if (!r.ok) { throw new Error("failed to add movie") }
-      return r.json()
-    })
-    .then(updatedDirector => {
-      updateDirector(updatedDirector)
-      navigate(`/directors/${id}/movies/${newMovie.id}`)
-    })
-    .catch(console.log)
+      .then((r) => r.json())
+      .then(() => {
+        navigate(`/directors/${id}/movies/${newMovie.id}`)
+      })
   }
 
   return (
@@ -45,7 +44,6 @@ function MovieForm() {
       <h2>Add New Movie</h2>
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
           placeholder="Movie Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -59,13 +57,12 @@ function MovieForm() {
           required
         />
         <input
-          type="text"
           placeholder="Genres (comma-separated)"
           value={genres}
           onChange={(e) => setGenres(e.target.value)}
           required
         />
-        <button type="submit">Add Movie</button>
+        <button type="submit">Add New Movie</button>
       </form>
     </div>
   )
